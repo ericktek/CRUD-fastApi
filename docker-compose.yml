@@ -1,0 +1,50 @@
+version: '3.9'
+
+services:
+
+  mysql_db:
+    container_name: mysql_crud_container
+    image: mysql:8.0
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ericktek
+      MYSQL_DATABASE: crud
+      MYSQL_USER: user
+      MYSQL_PASSWORD: ericktek
+    volumes:
+      - db_data:/var/lib/mysql
+
+  phpmyadmin:
+    container_name: phpmyadmin_crud_container
+    image: phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql_db
+      MYSQL_ROOT_PASSWORD: ericktek
+    depends_on:
+      - mysql_db
+
+  fastapi:
+    container_name: fastapi_container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=mysql://user:ericktek@mysql_db:3306/crud
+    volumes:
+      - .:/code
+    depends_on:
+      - mysql_db
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  db_data:
