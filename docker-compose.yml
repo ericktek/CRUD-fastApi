@@ -1,7 +1,6 @@
 version: '3.9'
 
 services:
-
   mysql_db:
     container_name: mysql_crud_container
     image: mysql:8.0
@@ -33,14 +32,25 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     environment:
       - DATABASE_URL=mysql://user:ericktek@mysql_db:3306/crud
     volumes:
       - .:/code
     depends_on:
       - mysql_db
+
+  nginx:
+    container_name: nginx_crud_container
+    image: nginx:latest
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - fastapi
 
 networks:
   default:
