@@ -8,10 +8,10 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-@app.get('/')
+@app.get('/', tags=['Health'])
 
 # health check
-def read_root():
+def root():
     return {"message": "Health check successfully!"}
 
 # Register the routers
